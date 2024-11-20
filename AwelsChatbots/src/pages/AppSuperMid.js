@@ -1,14 +1,51 @@
-import React from "react";
+import React, { useEffect } from "react";
 
 function App() {
+
+  useEffect(() => {
+    // Charger dynamiquement le script DruidWebchat
+    const script = document.createElement("script");
+    script.src = "https://awels.community.druidplatform.com/v2/druid_webchat_v2.js";
+    script.defer = true;
+    document.body.appendChild(script);
+
+
+    script.onload = () => {
+      // Ajouter un délai avant l'initialisation du chatbot
+      setTimeout(() => {
+        if (window.DruidWebchat_v2) {
+          window.DruidWebchat_v2.init({
+            botId: "0f1a67d4-3178-4cd9-a402-08dcea104ccc",
+            baseUrl: "https://druidapi.comm.eu.druidplatform.com",
+            queryParams: "",
+            conversationTokenEnabled: true,
+            UI: {
+              parentElement: document.querySelector(".druid-webchat-container"),
+              fullscreen: true,
+            },
+          });
+        } else {
+          console.error("DruidWebchat_v2 n'est pas disponible");
+        }
+      }, 1);
+    };
+
+    script.onerror = () => {
+      console.error("Le script DruidWebchat_v2 n'a pas pu être chargé.");
+    };
+
+    return () => {
+      // Nettoyage : supprimer le script si nécessaire
+      document.body.removeChild(script);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen p-4 md:p-8 bg-gradient-to-b from-gray-800 to-gray-900 text-gray-200">
       <div className="flex flex-col md:flex-row mt-8 md:mt-12 flex-grow">
-        {/* Colonne de gauche : Logo et Compétences */}
         <div className="md:w-1/3 lg:w-1/4 flex flex-col items-center p-4 space-y-8">
-          {/* Logo stylisé */}
           <div className="bg-gray-800 rounded-full shadow-lg border-4 border-blue-400">
-            <img src="/logo supermid.webp" alt="Logo" className="h-32 w-32 md:h-40 md:w-40 lg:h-48 lg:w-48 rounded-full"/>
+            <img src="/logo_supermid.webp" alt="Logo" className="h-32 w-32 md:h-40 md:w-40 lg:h-48 lg:w-48 rounded-full"/>
           </div>
 
           {/* Section des Compétences */}
@@ -34,8 +71,7 @@ function App() {
             </p>
           </div>
           {/* Espace pour le chatbot */}
-          <div className="flex-grow overflow-y-auto p-4 bg-gray-700 rounded mb-4 text-gray-300 w-full">
-        </div>
+          <div className="druid-webchat-container bg-gray-800 p-4 md:p-4 rounded-b-lg shadow-lg w-full h-[80vh]"></div>
         </div>
       </div>
     </div>
