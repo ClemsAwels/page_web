@@ -1,33 +1,44 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../AuthContext";
+import axios from "axios";
 
 const LoginPage = () => {
-  const { login } = useContext(AuthContext);
-  const [email, setEmail] = useState("");
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     try {
-      await login(email, password); // Met à jour l'utilisateur dans le contexte
-      navigate("/"); // Redirige vers le menu
-    } catch (err) {
-      setError("Identifiants incorrects");
+      const response = await axios.post(
+        "http://localhost:3001/login",
+        { username, password },
+        { withCredentials: true } // Important pour inclure les cookies
+      );
+
+      if (response.status === 200) {
+        navigate("/"); // Redirige vers la page Menu après un login réussi
+      }
+    } catch (error) {
+      setMessage(error.response?.data?.message || "Une erreur est survenue");
     }
+  };
+
+  const handleRegisterRedirect = () => {
+    navigate("/register"); // Redirige vers la page d'inscription
   };
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-gray-200">
-      <h1 className="text-2xl font-bold mb-6">Connexion</h1>
-      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
+      <h1 className="text-3xl font-bold mb-8">Connexion</h1>
+      <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-6">
         <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          type="text"
+          placeholder="Nom d'utilisateur"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           className="w-full p-3 rounded bg-gray-800 text-gray-200"
         />
         <input
@@ -44,7 +55,16 @@ const LoginPage = () => {
           Se connecter
         </button>
       </form>
-      {error && <p className="text-red-500 mt-4">{error}</p>}
+      {message && <p className="text-red-500 mt-4">{message}</p>}
+      <p className="text-gray-400 mt-8">
+        Pas encore de compte ?{" "}
+        <span
+          onClick={handleRegisterRedirect}
+          className="text-blue-500 hover:underline cursor-pointer"
+        >
+          Inscrivez-vous ici
+        </span>
+      </p>
     </div>
   );
 };

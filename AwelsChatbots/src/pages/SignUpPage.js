@@ -1,33 +1,33 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { register } from "../api/register";
 
-const SignUpPage = () => {
-  const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+const RegisterForm = () => {
+  const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [message, setMessage] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Récupérer les utilisateurs existants dans LocalStorage
-    const existingUsers = JSON.parse(localStorage.getItem("users")) || [];
-
-    // Vérifier si l'email est déjà utilisé
-    const userExists = existingUsers.some((user) => user.email === email);
-    if (userExists) {
-      setError("Cet email est déjà utilisé.");
-      return;
+    try {
+      await register(username, password);
+      setMessage("");
+      setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
+      setTimeout(() => {
+        navigate("/login"); // Redirige vers la page de connexion après inscription
+      }, 2000);
+    } catch (error) {
+      setMessage("");
+      setError(error.message || "Une erreur est survenue.");
     }
+  };
 
-    // Ajouter le nouvel utilisateur
-    const newUser = { name, email, password };
-    localStorage.setItem("users", JSON.stringify([...existingUsers, newUser]));
-
-    setSuccess("Inscription réussie ! Vous pouvez maintenant vous connecter.");
-    setTimeout(() => navigate("/login"), 2000); // Redirection vers la page de connexion
+  const handleLoginRedirect = () => {
+    navigate("/login"); // Redirige vers la page de connexion
   };
 
   return (
@@ -36,16 +36,9 @@ const SignUpPage = () => {
       <form onSubmit={handleSubmit} className="w-full max-w-sm space-y-4">
         <input
           type="text"
-          placeholder="Nom"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          className="w-full p-3 rounded bg-gray-800 text-gray-200"
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          placeholder="Nom d'utilisateur"
+          value={username}
+          onChange={(e) => setUsername(e.target.value)}
           className="w-full p-3 rounded bg-gray-800 text-gray-200"
         />
         <input
@@ -64,8 +57,18 @@ const SignUpPage = () => {
       </form>
       {error && <p className="text-red-500 mt-4">{error}</p>}
       {success && <p className="text-green-500 mt-4">{success}</p>}
+      {message && <p className="text-gray-300 mt-4">{message}</p>}
+      <p className="text-gray-400 mt-8">
+        Vous avez déjà un compte ?{" "}
+        <span
+          onClick={handleLoginRedirect}
+          className="text-blue-500 hover:underline cursor-pointer"
+        >
+          Connectez-vous ici
+        </span>
+      </p>
     </div>
   );
 };
 
-export default SignUpPage;
+export default RegisterForm;

@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    volumes:
+      - ./server/auth:/app/server/auth # Montre le dossier local auth dans le conteneur
+      - ./server/sessions:/app/server/sessions # Montre le dossier local sessions pour les sessions persistantes
+    ports:
+      - "3000:3000" # Frontend React
+      - "3001:3001" # Backend API
+    environment:
+      - NODE_ENV=production
+volumes:
+  auth_data: # Persist auth.json dans le dossier local
+  sessions_data: # Persist les sessions dans le dossier local

@@ -1,24 +1,20 @@
-# Étape 1 : Construction de l'application
-FROM node:18 AS build
-
+# Étape 1 : Construction du frontend
+FROM node:16 AS build
 WORKDIR /app
-
-COPY package*.json ./
+COPY package.json package-lock.json ./
 RUN npm install
-
-COPY . .
+COPY . ./
 RUN npm run build
 
-# Étape 2 : Servir avec Nginx
-FROM nginx:alpine
+# Étape 2 : Serveur backend
+FROM node:16
+WORKDIR /app
+COPY --from=build /app/build ./public
+COPY . ./
+RUN npm install
 
-# Copier les fichiers construits dans Nginx
-COPY --from=build /app/build /usr/share/nginx/html
+# Expose les ports nécessaires
+EXPOSE 3000 3001
 
-# Copier le fichier de configuration personnalisé
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-# Exposer le port 80
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Commande pour démarrer le serveur
+CMD ["node", "server/server.js"]
