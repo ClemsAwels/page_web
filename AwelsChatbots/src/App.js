@@ -7,6 +7,7 @@ import ProtectedRoute from "./ProtectedRoute"; // Vérifie directement l'authent
 import PageMaximus from "./pages/AppMaximus";
 import PageMerlin from "./pages/AppMerlin";
 import PageSuperMid from "./pages/AppSuperMid";
+import PageColbert from "./pages/AppColbert";
 
 function App() {
   return (
@@ -27,6 +28,14 @@ function App() {
           element={
             <ProtectedRoute>
               <PageMaximus />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/Colbert"
+          element={
+            <ProtectedRoute>
+              <PageColbert />
             </ProtectedRoute>
           }
         />

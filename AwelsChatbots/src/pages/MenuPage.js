@@ -55,6 +55,11 @@ function MenuPage() {
             Page Merlin
           </button>
         </Link>
+        <Link to="/Colbert">
+          <button className="w-full bg-yellow-200 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition">
+            Page Colbert
+          </button>
+        </Link>
         <Link to="/Supermid">
           <button className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transition">
             Page SuperMid
