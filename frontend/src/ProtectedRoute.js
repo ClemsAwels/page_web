@@ -2,13 +2,14 @@ import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
 import axios from "axios";
 
+const backendURL = process.env.REACT_APP_BACKEND_URL;
 const ProtectedRoute = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(null); // Null pour attendre la réponse du serveur
 
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/check-auth", {
+        const response = await axios.get(`${backendURL}/check-auth`, {
           withCredentials: true, // Important pour gérer les cookies si nécessaire
         });
         setIsAuthenticated(response.data.authenticated);

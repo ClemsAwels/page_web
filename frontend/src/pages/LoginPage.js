@@ -7,13 +7,15 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const backendURL = process.env.REACT_APP_BACKEND_URL;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
     try {
+      console.log(backendURL)
       const response = await axios.post(
-        "http://localhost:3001/login",
+        `${backendURL}/login`,
         { username, password },
         { withCredentials: true } // Important pour inclure les cookies
       );

@@ -5,11 +5,13 @@ import axios from "axios";
 function MenuPage() {
   const [user, setUser] = useState(null); // État pour stocker l'utilisateur
   const navigate = useNavigate();
+  
 
   useEffect(() => {
     const fetchAuthStatus = async () => {
       try {
-        const response = await axios.get("http://localhost:3001/check-auth", {
+        const backendURL = process.env.REACT_APP_BACKEND_URL;
+        const response = await axios.get(`${backendURL}/check-auth`, {
           withCredentials: true, // Inclus les cookies pour la session
         });
         if (response.data.authenticated) {
@@ -28,7 +30,8 @@ function MenuPage() {
 
   const handleLogout = async () => {
     try {
-      await axios.post("http://localhost:3001/logout", {}, { withCredentials: true });
+      const backendURL = process.env.REACT_APP_BACKEND_URL;
+      await axios.post(`${backendURL}/logout`, {}, { withCredentials: true });
       setUser(null); // Réinitialise l'utilisateur
       navigate("/login");
     } catch (error) {

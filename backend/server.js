@@ -24,8 +24,10 @@ app.use(
   })
 );
 
+const backendURL = process.env.REACT_APP_BACKEND_URL;
+
 // Enable CORS for the frontend
-app.use(cors({ credentials: true, origin: 'http://localhost:3000' }));
+app.use(cors({ credentials: true, origin: {backendURL} }));
 app.use(bodyParser.json());
 
 // Create `auth.json` if it does not exist
@@ -34,6 +36,10 @@ if (!fs.existsSync(AUTH_FILE)) {
 }
 
 // Login route
+app.get('/', (req, res) => {
+  res.send('Hello World');
+});
+
 app.post('/login', (req, res) => {
   const { username, password } = req.body;
   fs.readFile(AUTH_FILE, (err, data) => {
@@ -72,6 +78,20 @@ app.get('/check-auth', (req, res) => {
   }
   res.status(200).json({ authenticated: false });
 });
+
+// Logout route
+app.post('/logout', (req, res) => {
+  req.session.destroy((err) => {
+    if (err) {
+      return res.status(500).send({ message: 'Failed to log out' });
+    }
+    res.clearCookie('connect.sid'); // Efface le cookie de session
+    res.status(200).send({ message: 'Logout successful' });
+  });
+});
+
+
+
 
 // Start the server
 app.listen(PORT, () => {

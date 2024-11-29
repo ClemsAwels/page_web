@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"   # Port pour le frontend
+      - "3001:3001" # Port pour le backend
+    environment:
+      - NODE_ENV = production
+      - REACT_APP_API_URL= http://10.98.0.186:3001
+    volumes:
+      - ./backend/data:/app/backend/data  # Volume pour les données persistantes
+      - ./frontend/public:/app/frontend/public  # Volume pour les fichiers publics
+    restart: always
